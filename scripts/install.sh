@@ -1,9 +1,9 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOURCE_SCRIPT="${SCRIPT_DIR}/src/mkworktree.zsh"
+SOURCE_SCRIPT="${SCRIPT_DIR}/../src/mkworktree.zsh"
 TARGET_DIR="${HOME}/bin"
 TARGET_SCRIPT="${TARGET_DIR}/mkworktree"
 
