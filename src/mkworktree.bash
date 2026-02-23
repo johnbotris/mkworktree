@@ -107,7 +107,12 @@ parse_args() {
 }
 
 compute_worktree_dir() {
-  WORKTREE_DIR="../.worktrees/${PWD}/${BRANCH_NAME}"
+  local git_common_dir
+  local primary_worktree_root
+
+  git_common_dir="$(git rev-parse --git-common-dir)"
+  primary_worktree_root="$(cd "${git_common_dir}/.." && pwd -P)"
+  WORKTREE_DIR="${primary_worktree_root}/.worktrees/${BRANCH_NAME}"
 }
 
 validate_existing_directory() {
