@@ -154,7 +154,7 @@ install_dependencies_if_created() {
   if [[ "$WORKTREE_CREATED" -eq 1 ]]; then
     (
       cd "$WORKTREE_DIR"
-      pnpm install
+      pnpm install --frozen-lockfile --offline
     )
   fi
 }
