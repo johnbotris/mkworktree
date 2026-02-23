@@ -3,7 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SOURCE_SCRIPT="${SCRIPT_DIR}/src/mkworktree"
+SOURCE_SCRIPT="${SCRIPT_DIR}/src/mkworktree.zsh"
 TARGET_DIR="${HOME}/bin"
 TARGET_SCRIPT="${TARGET_DIR}/mkworktree"
 
