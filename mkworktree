@@ -63,6 +63,15 @@ track_with_graphite_if_created() {
   fi
 }
 
+install_dependencies_if_created() {
+  if [[ "$WORKTREE_CREATED" -eq 1 ]]; then
+    (
+      cd "$WORKTREE_DIR"
+      pnpm install
+    )
+  fi
+}
+
 cd_to_worktree() {
   cd "$WORKTREE_DIR"
 }
@@ -73,6 +82,7 @@ main() {
   validate_existing_directory
   create_worktree_if_needed
   track_with_graphite_if_created
+  install_dependencies_if_created
   cd_to_worktree
 }
 
