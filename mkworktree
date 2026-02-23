@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+  echo "Usage: $0 <branch-name>" >&2
+}
+
+parse_args() {
+  if [[ "$#" -ne 1 ]]; then
+    usage
+    return 1
+  fi
+
+  BRANCH_NAME="$1"
+  if [[ -z "$BRANCH_NAME" ]]; then
+    usage
+    return 1
+  fi
+}
+
+compute_worktree_dir() {
+  WORKTREE_DIR="../.worktrees/${PWD}/${BRANCH_NAME}"
+}
+
+validate_existing_directory() {
+  if [[ ! -d "$WORKTREE_DIR" ]]; then
+    return 0
+  fi
+
+  if git -C "$WORKTREE_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    return 0
+  fi
+
+  echo "Error: $WORKTREE_DIR exists but is not a git worktree." >&2
+  return 1
+}
+
+create_worktree_if_needed() {
+  WORKTREE_CREATED=0
+
+  if [[ -d "$WORKTREE_DIR" ]]; then
+    return 0
+  fi
+
+  mkdir -p "$(dirname "$WORKTREE_DIR")"
+
+  if git show-ref --verify --quiet "refs/heads/${BRANCH_NAME}"; then
+    git worktree add "$WORKTREE_DIR" "$BRANCH_NAME"
+  else
+    git worktree add -b "$BRANCH_NAME" "$WORKTREE_DIR" master
+  fi
+
+  WORKTREE_CREATED=1
+}
+
+track_with_graphite_if_created() {
+  if [[ "$WORKTREE_CREATED" -eq 1 ]]; then
+    (
+      cd "$WORKTREE_DIR"
+      gt track
+    )
+  fi
+}
+
+cd_to_worktree() {
+  cd "$WORKTREE_DIR"
+}
+
+main() {
+  parse_args "$@"
+  compute_worktree_dir
+  validate_existing_directory
+  create_worktree_if_needed
+  track_with_graphite_if_created
+  cd_to_worktree
+}
+
+main "$@"
